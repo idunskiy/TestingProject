@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+{% if users_list %}
+    <table class="table table-hover" border="1px">
+        <tr>
+          <th>Username</th>
+          <th>Name</th>
+          <th>Number of tests</th>
+          <th>Average score</th>
+        </tr>
+        {% for user in users_list %}
+            <tr>
+              <td> {{ user.username }} </td>
+              <td> {{ user.first_name }} {{ user.last_name }}</td>
+              <td> {{ user.test_results.count }}</td>
+              <td> {{ user.test_results.avg_score }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+
+    {% include 'pagination.html' %}
+
+{% else %}
+    <p>Sorry, list is empty</p>
+{% endif %}
+
+{% endblock %}
