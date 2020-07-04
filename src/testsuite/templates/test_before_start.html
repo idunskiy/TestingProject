@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h1>Let's start {{ test.title }} </h1>
+<p> {{ test.description }} </p>
+
+ <div class="container">
+ <div class="left">
+    <table class="table table-hover" border="1px" width="50%" float = "left">
+            <tr>
+              <th> {{ test.title }} </th>
+            </tr>
+             <tr>
+              <td> Number of questions </td>
+              <td> {{ test.questions.count }} </td>
+            </tr>
+            <tr>
+              <td> Number of runs </td>
+              <td> {{ test.test_results.count }} </td>
+            </tr>
+            <tr>
+              <td> Best result </td>
+              <td> {{ best_result|floatformat:'2' }} </td>
+        </table>
+ </div>
+<div class="right">
+<img class="test-image"  src="{{ test.image.url }}"/>
+    <div margin-top="20px">
+        {% if test_result.is_new %}
+            <a href="{% url 'test:next' pk=test.id %}" type="button" class="btn-lg btn-success">Start</a>
+        {% else %}
+            <a href="{% url 'test:next' pk=test.id %}" type="button" class="btn-lg btn-warning">Continue</a>
+        {% endif %}
+    </div>
+</div>
+
+</div>
+
+{% endblock %}

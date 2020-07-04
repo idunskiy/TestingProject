@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    {{ block.super }}
+    CONGRATULATIONS!<br>
+    You've just finished <b>{{ test_result.test.title }}</b>
+{% endblock %}
+
+{% block content %}
+{% load static %}
+<div class="container">
+ <div class="left">
+    <table class="table table-hover" border="1px" width="50%" float = "left">
+            <tr>
+              <th> <b>Test run #{{ test_result.test_run_number }}</b> </th>
+            </tr>
+             <tr>
+              <td> Correct answers </td>
+              <td> {{ test_result.correct_answers_count }} of
+                  {{ test_result.all_questions.count }} </td>
+            </tr>
+            <tr>
+              <td> Score </td>
+              <td> {{ test_result.avg_score }} points </td>
+            </tr>
+            <!--<tr>
+              <td> Best result </td>
+              <td> {{ test.avg_score.max }} </td>
+              -->
+        </table>
+ </div>
+<div class="right">
+<img class="test-image"  src="{% static 'main/img/victory.jpg' %}"/>
+    <div margin-top="20px">
+            <a href="{% url 'test:list' %}" type="button" class="btn-lg btn-success">START ANOTHER TEST</a>
+    </div>
+</div>
+
+</div>
+
+{% endblock %}

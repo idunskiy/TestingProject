@@ -1,6 +1,6 @@
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
-from django.db.models import Count, Sum
+from django.db.models import Count, Sum, Max
 
 from app import settings
 
@@ -51,7 +51,7 @@ class Question(models.Model):
     description = models.TextField(max_length=512, null=True, blank=True)
 
     def __str__(self):
-        return f'{self.text}'
+        return f'{self.number}, {self.text}'
 
     def next(self):
         return 'next'
@@ -76,20 +76,50 @@ class TestResult(models.Model):
                                                                                            MaxValueValidator(100)])
     datetime_run = models.DateTimeField(auto_now_add=True)
     is_completed = models.BooleanField(default=False)
+    is_new = models.BooleanField(default=True)
 
     def update_score(self):
         qs = self.test_result_details.values('question').annotate(
             num_answers=Count('question'),
-            points=Sum('is_correct')
+            score=Sum('is_correct')
         )
-        self.score = sum(
-            entry['num_answers'] == int(entry['points'])
+        print(qs)
+        self.avg_score = sum(
+            int(entry['score']) / entry['num_answers']
             for entry in qs
         )
 
     def finish(self):
         self.update_score()
-        self.is_completed=True
+        self.is_completed = True
+
+    def __str__(self):
+        return f'{self.user}, {self.test}, {self.is_completed}'
+
+    def correct_answers_count(self):
+        correct_answers = 0
+        qs = self.test_result_details.values('question').annotate(
+            num_answers=Count('question'),
+            score=Sum('is_correct')
+        )
+        for entry in qs:
+            if int(entry['score']) / entry['num_answers'] == 1:
+                correct_answers += 1
+        return correct_answers
+
+    def all_questions(self):
+        return self.test_result_details.values('question').annotate(
+            Count('question'),
+        )
+
+    def best_result(self):
+        result = TestResult.objects.all().aggregate(
+            max_score=Max('avg_score')
+        )
+        return result['max_score']
+
+    def test_run_number(self):
+        return TestResult.objects.all().count()
 
 
 class TestResultDetail(models.Model):
@@ -97,3 +127,9 @@ class TestResultDetail(models.Model):
     question = models.ForeignKey(to=Question, null=True, blank=True, on_delete=models.CASCADE)
     answer = models.ForeignKey(to=Answer, on_delete=models.CASCADE)
     is_correct = models.BooleanField(default=False)
+
+
+class TestSale(models.Model):
+    store_id = models.PositiveSmallIntegerField()
+    sold_on = models.DateField(auto_now_add=True)
+    sum = models.DecimalField(max_digits=6, decimal_places=2)

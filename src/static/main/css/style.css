@@ -6,6 +6,13 @@
     border-radius: 50%;
 }
 
+.test-image{
+    vertical-align: middle;
+    width: 500px;
+    height: 500px;
+    border-radius: 50%;
+}
+
 .small-avatar{
     vertical-align: middle;
     width: 40px;
@@ -13,11 +20,25 @@
     border-radius: 50%;
 }
 
-.li-message{
-    display:table;
-    margin:200px auto 200px auto;
-}
 
 h1 {
     color: #ef6155
+}
+
+.container{
+  display:table;
+  border: 1px;
+ }
+
+.left{
+  display:table-cell;
+  width:50.0vw;
+  display: inline-block;
+  vertical-align: top;
+}
+.right{
+  margin: 25px 50px 75px 100px;
+  display:table-cell;
+  width:50.0vw;
+  vertical-align: top;
 }
