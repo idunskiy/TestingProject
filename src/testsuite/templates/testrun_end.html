@@ -21,12 +21,17 @@
             </tr>
             <tr>
               <td> Score </td>
-              <td> {{ test_result.avg_score }} points </td>
+              <td> {{ test_result.avg_score|floatformat:2 }} points </td>
             </tr>
-            <!--<tr>
+            <tr>
               <td> Best result </td>
-              <td> {{ test.avg_score.max }} </td>
-              -->
+              <td> {{ best_result }} </td>
+            </tr>
+            <tr>
+              <td> Time spent </td>
+              <td> {{ time_spent }} </td>
+            </tr>
+
         </table>
  </div>
 <div class="right">

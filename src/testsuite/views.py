@@ -41,7 +41,7 @@ class TestStartView(View):
                 test=test
             )
         request.session['testresult'] = test_result.id
-        best_result = test_result.best_result()
+        best_result = test_result.best_result_for_test(test.id)
 
         number_of_runs = test_result.test_run_number()
         print('number of all runs' + str(number_of_runs))
@@ -151,12 +151,19 @@ class TestRunView(View):
             del request.session['testresult']
             current_test_result.finish()
             current_test_result.save()
+
+            test_time_spent = datetime.datetime.utcnow() - current_test_result.datetime_run.replace(tzinfo=None)
+            hours, remainder = divmod(test_time_spent.total_seconds(), 3600)
+            minutes, seconds = divmod(remainder, 60)
+            formatted_date = '{:02}:{:02}:{:02}'.format(int(hours), int(minutes), int(seconds))
+            best_result = current_test_result.best_result_for_test(test.id)
             return render(
                 request=request,
                 template_name='testrun_end.html',
                 context={
+                    'best_result': best_result,
                     'test_result': current_test_result,
-                    'time_spent': datetime.datetime.utcnow() - current_test_result.datetime_run.replace(tzinfo=None)
+                    'time_spent': formatted_date
                 }
                 )
 

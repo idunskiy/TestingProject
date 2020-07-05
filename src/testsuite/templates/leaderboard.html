@@ -8,14 +8,20 @@
           <th>Username</th>
           <th>Name</th>
           <th>Number of tests</th>
-          <th>Average score</th>
+          <th>Max score</th>
+          <th>Time of last run</th>
+          <th>Score total</th>
+          <th>% of successful runs</th>
         </tr>
         {% for user in users_list %}
             <tr>
               <td> {{ user.username }} </td>
               <td> {{ user.first_name }} {{ user.last_name }}</td>
               <td> {{ user.test_results.count }}</td>
-              <td> {{ user.test_results.avg_score }}</td>
+              <td> {{ user.best_result_for_user }}</td>
+              <td> {{ user.last_test_run_for_user }}</td>
+              <td> {{ user.score_total_for_user }}</td>
+              <td> {{ user.percentage_of_successful_runs_for_user }}</td>
             </tr>
         {% endfor %}
     </table>
