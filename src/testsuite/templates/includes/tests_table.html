@@ -15,8 +15,8 @@
               <td> {{ test.topic }}</td>
               <td> {{ test.description }}</td>
               <td> {{ test.level }}</td>
-              <td> <a href="#">Start</a></td>
-              <td> <a href="{% url 'test:delete' test.id %}">DEL</a></td>
+              <td> <a href="{% url 'test:start' test.id %}">Start</a></td>
+              <td> <a href="{% url 'test:delete' test.id %}">Delete</a></td>
             </tr>
         {% endfor %}
     </table>

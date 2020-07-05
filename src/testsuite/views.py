@@ -25,6 +25,37 @@ class TestSuiteListView(ListView):
         return qs
 
 
+class TestStartView(View):
+    model = Test
+
+    def get(self, request, pk):
+        test = Test.objects.get(pk=pk)
+
+        test_result_id = request.session.get('testresult')
+
+        if test_result_id:
+            test_result = TestResult.objects.get(id=test_result_id)
+        else:
+            test_result = TestResult.objects.create(
+                user=request.user,
+                test=test
+            )
+        request.session['testresult'] = test_result.id
+        best_result = test_result.best_result()
+
+        number_of_runs = test_result.test_run_number()
+        print('number of all runs' + str(number_of_runs))
+        return render(
+            request=request,
+            template_name='test_before_start.html',
+            context={
+                'best_result': best_result,
+                'test': test,
+                'test_result': test_result
+            }
+        )
+
+
 class LeaderBoardView(ListView):
     model = User
     template_name = 'leaderboard.html'
@@ -49,13 +80,18 @@ class TestDeleteView(DeleteView):
 class TestRunView(View):
     PREFIX = 'answers_'
 
-    def get(self, request, pk, seq_nr):
-        question = Question.objects.all().filter(test__id=pk, number=seq_nr).first()
+    def get(self, request, pk):
+
+        if 'testresult' not in request.session:
+            return HttpResponse('Error')
+
+        testresult_step = request.session.get('testresult_step', 1)
+        request.session['testresult_step'] = testresult_step
+        question = Question.objects.get(test__id=pk, number=testresult_step)
         answers = [
             answer.text
             for answer in question.answers.all()
         ]
-
         return render(
             request=request,
             template_name='testrun.html',
@@ -66,32 +102,39 @@ class TestRunView(View):
             }
         )
 
-    def post(self, request, pk, seq_nr):
+    def post(self, request, pk):
+
+        if ('testresult') not in request.session:
+            return HttpResponse('Error')
+        testresult_step = request.session.get('testresult_step', 1)
+
         test = Test.objects.get(pk=pk)
-        question = Question.objects.filter(test__id = pk, number=seq_nr).first()
-        data = request.POST
+        question = Question.objects.get(test__id=pk, number=testresult_step)
         answers = Answer.objects.filter(
-            question = question
+            question=question
         ).all()
-        data = request.POST
+
         choices = {
-            k: True
+            k.replace(self.PREFIX, ''): True
             for k in request.POST if k.startswith(self.PREFIX)
         }
 
         if not choices:
-            messages.error(self.request, extra_tags = 'danger', )
-            return redirect(reverse('test:testrun_step', kwargs={'pk': pk, 'seq_nr':seq_nr}))
+            messages.error(self.request, extra_tags='danger', message='ERROR: You should select at least 1 answer!')
+            return redirect(reverse('test:next', kwargs={'pk': pk}))
 
-        current_test_result = TestResult.objects.filter(
-            test=test,
-            user=request.user,
-            is_completed=False
-        ).last()
+        if len(choices) == len(answers):
+            messages.error(self.request, extra_tags='danger', message=f"ERROR: You can't select all answers!")
+            return redirect(reverse('test:next', kwargs={'pk': pk}))
 
+        print('testresult in post' + str(request.session['testresult']))
+        current_test_result = TestResult.objects.get(
+            id=request.session['testresult']
+        )
+        print('currect test result ' + str(current_test_result))
         for idx, answer in enumerate(answers, 1):
            value = choices.get(str(idx), False)
-           test_result_detail = TestResultDetail.objects.create(
+           TestResultDetail.objects.create(
                test_result=current_test_result,
                question=question,
                answer=answer,
@@ -99,8 +142,13 @@ class TestRunView(View):
            )
 
         if question.number < test.question_count():
-            return redirect(reverse('test:testrun_step', kwargs={'pk': pk, 'seq_nr': seq_nr + 1}))
+            current_test_result.is_new = False
+            current_test_result.save()
+            request.session['testresult_step'] = testresult_step + 1
+            return redirect(reverse('test:next', kwargs={'pk': pk}))
         else:
+            del request.session['testresult_step']
+            del request.session['testresult']
             current_test_result.finish()
             current_test_result.save()
             return render(
@@ -112,9 +160,13 @@ class TestRunView(View):
                 }
                 )
 
-        return redirect(reverse('test:testrun_step', kwargs={'pk': pk, 'seq_nr':seq_nr+1}))
 
+# def last_run(self):
+#         last_run = self.test_runs.order_by('-id').first()
+#         if last_run:
+#             return last_run.datetime_run
+#         return ''
+#
+#     datetime_run = models.DateTimeField(auto_now_add=True)
+#     is_completed = models.BooleanField(default=False)
 
-# class TestSuiteListView(ListView):
-#     model = Test
-#     template_name = ''

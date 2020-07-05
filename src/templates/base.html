@@ -33,7 +33,7 @@
 
    <ul class="navbar-nav">
                 {% if user.is_authenticated %}
-                    <li class="avatar">
+                    <li class="nav-item">
                         <img class="small-avatar" src="{{ user.image.url }}" alt="" />
                     </li>
                     <li class="nav-item active">
@@ -71,9 +71,12 @@
 {% endif %}
 </div>
 
+<div class="border rounded text-center p-3 m-3 bg-light text-dark">
+    <h3>{% block title %}{{ title }}{% endblock %}</h3>
+</div>
+
 <div class="container">
     <h2>{{ title }}</h2>
-  <p></p>
 
 {% block content %}
 {% endblock %}
