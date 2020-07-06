@@ -41,9 +41,9 @@ class TestStartView(View):
                 test=test
             )
         request.session['testresult'] = test_result.id
-        best_result = test.best_result(test.id)
+        best_result = test.best_result()
 
-        number_of_runs = test_result.test_run_number()
+        number_of_runs = test_result.test_runs_count()
         print('number of all runs' + str(number_of_runs))
         return render(
             request=request,
@@ -154,7 +154,7 @@ class TestRunView(View):
 
             dt1 = datetime.datetime.utcnow().replace(microsecond=0)
             dt2 = current_test_result.datetime_run.replace(tzinfo=None, microsecond=0)
-            best_result = test.best_result(test.id)
+            best_result = test.best_result()
             return render(
                 request=request,
                 template_name='testrun_end.html',

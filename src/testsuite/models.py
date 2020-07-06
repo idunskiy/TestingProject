@@ -42,9 +42,8 @@ class Test(models.Model):
             return last_run.datetime_run
         return ''
 
-    @staticmethod
-    def best_result(test_result_id):
-        result = TestResult.objects.filter(test__pk=test_result_id).aggregate(
+    def best_result(self):
+        result = self.test_results.aggregate(
             max_score=Max('avg_score')
         )
         return round(result['max_score'], 2)
@@ -120,19 +119,7 @@ class TestResult(models.Model):
             Count('question'),
         )
 
-    # def max_score(self):
-    #     qs = self.test_result_details.values('question').annotate(
-    #         num_answers=Count('question'),
-    #     )
-    #     return qs
-
-    def all_answers_count(self):
-        qs = self.test_result_details.values('question').annotate(
-            num_answers=Count('question'),
-        )
-        return qs['num_answers']
-
-    def test_run_number(self):
+    def test_runs_count(self):
         return TestResult.objects.all().count()
 
 
