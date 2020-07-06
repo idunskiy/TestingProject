@@ -1,3 +1,4 @@
+from django import template
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from django.db.models import Count, Sum, Max
@@ -36,10 +37,16 @@ class Test(models.Model):
         return self.questions.count()
 
     def last_run(self):
-        last_run = self.test_suite_runs.order_by('-id').first()
+        last_run = self.test_results.order_by('-id').first()
         if last_run:
             return last_run.datetime_run
         return ''
+
+    def best_result(self):
+        result = self.test_results.aggregate(
+            max_score=Max('avg_score')
+        )
+        return round(result['max_score'], 2)
 
 
 class Question(models.Model):
@@ -112,13 +119,7 @@ class TestResult(models.Model):
             Count('question'),
         )
 
-    def best_result(self):
-        result = TestResult.objects.all().aggregate(
-            max_score=Max('avg_score')
-        )
-        return result['max_score']
-
-    def test_run_number(self):
+    def test_runs_count(self):
         return TestResult.objects.all().count()
 
 
