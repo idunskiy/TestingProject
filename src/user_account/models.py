@@ -29,7 +29,7 @@ class User(AbstractUser):
             return round(result['sum_score'], 2)
 
     def percentage_of_successful_runs(self):
-        all_test_results = TestResult.objects.filter(user__pk=self.id)
+        all_test_results = self.test_results.all()
         successful_tests = 0
         for test_result in all_test_results:
             if test_result.all_questions().count() is not 0:
