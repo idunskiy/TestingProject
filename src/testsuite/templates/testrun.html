@@ -1,9 +1,20 @@
 {% extends 'base.html' %}
+{% load math %}
 
 {% block title %}
-    {{ block.super }}
-    Question #{{ question.number }}: <b>{{ question.text }}</b>
+{{ block.super }}
+{% with percentage=question.number|div:question.test.questions_count|mult:100|floatformat:2 %}
+{% expr '(%1 -1)/%2*100' question.number question.test.questions_count as percent %}
+
+    Question #{{ question.number }} ({{ percent|floatformat:2 }}): <b>{{ question.text }}</b>
+
+<div class="progress mt-4">
+  <div class="progress-bar" role="progressbar" style="width: {{ percent }}%" aria-valuenow="{{ percent }}" aria-valuemin="0" aria-valuemax="100"></div>
+</div>
+{% endwith %}
 {% endblock %}
+
+
 
 {% block content %}
     <form method="post">

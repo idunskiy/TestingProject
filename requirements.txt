@@ -16,6 +16,7 @@ pycodestyle==2.6.0
 pydevd-pycharm==193.6911.25
 pyflakes==2.2.0
 python-dateutil==2.8.1
+python-dotenv==0.14.0
 pytz==2020.1
 six==1.15.0
 sqlparse==0.3.1

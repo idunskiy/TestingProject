@@ -19,9 +19,6 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'a8vrr8hrstb@w6q)ah0c=$awcg#8=z-9gmf^v3@g2o+$*)o@f9'
-
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
@@ -133,3 +130,8 @@ AUTH_USER_MODEL = 'user_account.User'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+try:
+    from app.settings.old.settings_local import *
+except ImportError:
+    pass

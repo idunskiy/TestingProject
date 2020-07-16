@@ -17,13 +17,11 @@ from django.contrib import admin
 from django.urls import path, include
 from django.views.generic import TemplateView
 from django.conf.urls.static import static
-from app import settings
+from django.conf import settings
 from testsuite.views import LeaderBoardView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-
-    # path('', TemplateView.as_view(template_name='index.html'), name='index'),
     path('account/', include('user_account.urls')),
     path('leaderboard/', LeaderBoardView.as_view(), name='leaderboard'),
     path('', TemplateView.as_view(template_name='index.html'), name='index'),
