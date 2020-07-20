@@ -137,7 +137,6 @@ class TestRunView(LoginRequiredMixin, View):
         current_test_result = TestResult.objects.get(
             id=request.session['testresult']
         )
-        print('currect test result ' + str(current_test_result))
         for idx, answer in enumerate(answers, 1):
            value = choices.get(str(idx), False)
            TestResultDetail.objects.create(

@@ -134,6 +134,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 SECRET_KEY = os.environ['SECRET_KEY']
 
+
 # try:
 #     from app.settings_local import *
 # except ImportError:
