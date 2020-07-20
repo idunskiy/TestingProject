@@ -8,7 +8,7 @@ from django.test import TestCase, Client
 from django.urls import reverse
 from faker import Faker
 
-from testsuite.models import Test, Question, TestResult
+from testsuite.models import Test, Question, TestResult, Answer
 
 
 class TestModelTest(TestCase):
@@ -128,8 +128,9 @@ class TestModelExtendedTests(TestCase):
 
     def _correct_answers(self, test: Test):
         correct_answers = dict()
-        for question_idx, question in enumerate(test.questions.all(),1):
-            for answer_idx, answer in enumerate(question.answers.all(), 1):
+        for question_idx, question in enumerate(test.questions.all(), 1):
+            answers = Answer.objects.filter(question_id=question.id).select_related('question').all()
+            for answer_idx, answer in enumerate(list(answers), 1):
                 if answer.is_correct:
                     correct_answers['{}'.format(question_idx)] = 'answers_'+'{}'.format(answer_idx)
         return correct_answers
@@ -148,8 +149,6 @@ class TestModelExtendedTests(TestCase):
     def test_pass_success(self):
         # Math test
         test = Test.objects.get(pk=1)
-        print(self._correct_answers(test))
-        # answers = 'answers_1', 'answers_3', 'answers_3'
         self._run_test_with_answers(test, self._correct_answers(test))
         test_result = test.test_results.order_by('-id').first()
         self.assertEqual(test_result.correct_answers_count(), 3)
@@ -158,12 +157,12 @@ class TestModelExtendedTests(TestCase):
     def test_pass_fail(self):
         # Chemistry test
         test = Test.objects.get(pk=2)
-        _incorrect_answers = self._correct_answers(test)
-        _index = random.randint(1, len(_incorrect_answers))
-        _chosen_answer = _incorrect_answers.get('{}'.format(_index))
-        _new_value = int(_chosen_answer[len('answers_'):])+1
-        _incorrect_answer = 'answers_' + '{}'.format(_new_value)
-        _incorrect_answers['{}'.format(_index)] = _incorrect_answer
-        self._run_test_with_answers(test, _incorrect_answers)
+        incorrect_answers = self._correct_answers(test)
+        index = random.randint(1, len(incorrect_answers))
+        chosen_answer = incorrect_answers.get('{}'.format(index))
+        new_value = int(chosen_answer[len('answers_'):])+1
+        incorrect_answer = 'answers_' + '{}'.format(new_value)
+        incorrect_answers['{}'.format(index)] = incorrect_answer
+        self._run_test_with_answers(test, incorrect_answers)
         test_result = test.test_results.order_by('-id').first()
         self.assertNotEqual(test_result.correct_answers_count(), 3)
