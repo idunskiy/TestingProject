@@ -151,7 +151,7 @@ class TestModelExtendedTests(TestCase):
         test = Test.objects.get(pk=1)
         self._run_test_with_answers(test, self._correct_answers(test))
         test_result = test.test_results.order_by('-id').first()
-        self.assertEqual(test_result.correct_answers_count(), 3)
+        self.assertEqual(test_result.correct_answers_count(), test.questions_count())
 
 
     def test_pass_fail(self):
@@ -165,4 +165,4 @@ class TestModelExtendedTests(TestCase):
         incorrect_answers['{}'.format(index)] = incorrect_answer
         self._run_test_with_answers(test, incorrect_answers)
         test_result = test.test_results.order_by('-id').first()
-        self.assertNotEqual(test_result.correct_answers_count(), 3)
+        self.assertNotEqual(test_result.correct_answers_count(), test.questions_count())
