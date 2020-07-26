@@ -18,14 +18,21 @@ from django.urls import path, include
 from django.views.generic import TemplateView
 from django.conf.urls.static import static
 from django.conf import settings
+
+import testsuite
 from testsuite.views import LeaderBoardView
+
+
+handler404 = 'testsuite.views.handler404'
+handler500 = 'testsuite.views.handler500'
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('account/', include('user_account.urls')),
     path('leaderboard/', LeaderBoardView.as_view(), name='leaderboard'),
     path('', TemplateView.as_view(template_name='index.html'), name='index'),
-    path('tests/', include('testsuite.urls'))
+    path('tests/', include('testsuite.urls')),
+
 ]
 
 urlpatterns += \

@@ -4,6 +4,7 @@ from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
+from django.template import loader, Context
 from django.urls import reverse, reverse_lazy
 from django.views import View
 from django.views.generic import ListView, DeleteView
@@ -169,6 +170,34 @@ class TestRunView(LoginRequiredMixin, View):
                     'time_spent': str(dt1-dt2)
                 }
                 )
+
+
+def handler404(request, exception):
+    # 1. Load models for this view
+    # from idgsupply.models import My404Method
+
+    # 2. Generate Content for this view
+    template = loader.get_template('404.htm')
+    context = Context({
+        'message': 'All: %s' % request,
+    })
+
+    # 3. Return Template for this view + Data
+    return HttpResponse(content=template.render(context), content_type='text/html; charset=utf-8', status=404)
+
+
+def handler500(request):
+    # 1. Load models for this view
+    # from idgsupply.models import My404Method
+
+    # 2. Generate Content for this view
+    template = loader.get_template('500.htm')
+    context = Context({
+        'message': 'All: %s' % request,
+    })
+
+    # 3. Return Template for this view + Data
+    return HttpResponse(content=template.render(context), content_type='text/html; charset=utf-8', status=500)
 
 
 # def last_run(self):
