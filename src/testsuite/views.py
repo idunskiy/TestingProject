@@ -177,7 +177,7 @@ def handler404(request, exception):
     # from idgsupply.models import My404Method
 
     # 2. Generate Content for this view
-    template = loader.get_template('404.htm')
+    template = loader.get_template('404.html')
     context = Context({
         'message': 'All: %s' % request,
     })
@@ -191,7 +191,7 @@ def handler500(request):
     # from idgsupply.models import My404Method
 
     # 2. Generate Content for this view
-    template = loader.get_template('500.htm')
+    template = loader.get_template('500.html')
     context = Context({
         'message': 'All: %s' % request,
     })
