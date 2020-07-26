@@ -173,31 +173,11 @@ class TestRunView(LoginRequiredMixin, View):
 
 
 def handler404(request, exception):
-    # 1. Load models for this view
-    # from idgsupply.models import My404Method
-
-    # 2. Generate Content for this view
-    template = loader.get_template('404.html')
-    context = Context({
-        'message': 'All: %s' % request,
-    })
-
-    # 3. Return Template for this view + Data
-    return HttpResponse(content=template.render(context), content_type='text/html; charset=utf-8', status=404)
+    return render(request, '404.html', status=404)
 
 
 def handler500(request):
-    # 1. Load models for this view
-    # from idgsupply.models import My404Method
-
-    # 2. Generate Content for this view
-    template = loader.get_template('500.html')
-    context = Context({
-        'message': 'All: %s' % request,
-    })
-
-    # 3. Return Template for this view + Data
-    return HttpResponse(content=template.render(context), content_type='text/html; charset=utf-8', status=500)
+    return render(request, '500.html', status=500)
 
 
 # def last_run(self):
