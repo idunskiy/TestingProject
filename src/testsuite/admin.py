@@ -17,7 +17,7 @@ class QuestionsInline(admin.TabularInline):
 
 class AnswersInline(admin.TabularInline):
     model = Answer
-    fields = ('text', 'is_correct',)  # 'num_variant_min_limit')
+    fields = ('id', 'text', 'is_correct',)  # 'num_variant_min_limit')
     show_change_link = True
     extra = 0
     formset = AnswerInlineFormSet
@@ -42,3 +42,4 @@ class QuestionAdminModel(admin.ModelAdmin):
 
 admin.site.register(Test, TestAdminModel)
 admin.site.register(Question, QuestionAdminModel)
+admin.site.register(Answer)

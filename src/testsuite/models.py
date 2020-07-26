@@ -3,7 +3,7 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from django.db.models import Count, Sum, Max
 
-from app import settings
+from django.conf import settings
 
 
 class Topic(models.Model):
@@ -33,7 +33,7 @@ class Test(models.Model):
     def __str__(self):
         return f'{self.title} , {self.topic}, {self.description}, {self.level}'
 
-    def question_count(self):
+    def questions_count(self):
         return self.questions.count()
 
     def last_run(self):

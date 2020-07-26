@@ -1,6 +1,7 @@
 import datetime
 
 from django.contrib import messages
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse, reverse_lazy
@@ -16,6 +17,7 @@ class TestSuiteListView(ListView):
     model = Test
     template_name = 'tests_list.html'
     context_object_name = 'tests_list'
+    login_url = reverse_lazy('user_account:login')
 
     def get_queryset(self):
         qs = super().get_queryset()
@@ -25,8 +27,9 @@ class TestSuiteListView(ListView):
         return qs
 
 
-class TestStartView(View):
+class TestStartView(LoginRequiredMixin, View):
     model = Test
+    login_url = reverse_lazy('user_account:login')
 
     def get(self, request, pk):
         test = Test.objects.get(pk=pk)
@@ -56,10 +59,11 @@ class TestStartView(View):
         )
 
 
-class LeaderBoardView(ListView):
+class LeaderBoardView(LoginRequiredMixin, ListView):
     model = User
     template_name = 'leaderboard.html'
     context_object_name = 'users_list'
+    login_url = reverse_lazy('user_account:login')
 
     def get_queryset(self):
         qs = super().get_queryset()
@@ -69,16 +73,18 @@ class LeaderBoardView(ListView):
         return qs
 
 
-class TestDeleteView(DeleteView):
+class TestDeleteView(LoginRequiredMixin, DeleteView):
     model = Test
     form_class = TestDeleteForm
+    login_url = reverse_lazy('user_account:login')
 
     def get_success_url(self):
         return reverse('test:list')
 
 
-class TestRunView(View):
+class TestRunView(LoginRequiredMixin, View):
     PREFIX = 'answers_'
+    login_url = reverse_lazy('user_account:login')
 
     def get(self, request, pk):
 
@@ -131,7 +137,6 @@ class TestRunView(View):
         current_test_result = TestResult.objects.get(
             id=request.session['testresult']
         )
-        print('currect test result ' + str(current_test_result))
         for idx, answer in enumerate(answers, 1):
            value = choices.get(str(idx), False)
            TestResultDetail.objects.create(
@@ -141,7 +146,7 @@ class TestRunView(View):
                is_correct=(value == answer.is_correct)
            )
 
-        if question.number < test.question_count():
+        if question.number < test.questions_count():
             current_test_result.is_new = False
             current_test_result.save()
             request.session['testresult_step'] = testresult_step + 1
