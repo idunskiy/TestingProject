@@ -22,9 +22,11 @@ from django.conf import settings
 import testsuite
 from testsuite.views import LeaderBoardView
 
-
+handler400 = 'testsuite.views.handler400'
+handler403 = 'testsuite.views.handler403'
 handler404 = 'testsuite.views.handler404'
 handler500 = 'testsuite.views.handler500'
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
