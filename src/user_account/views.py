@@ -6,7 +6,7 @@ from django.shortcuts import render, redirect
 from django.urls import reverse, reverse_lazy
 from django.views.generic import TemplateView, CreateView, UpdateView, FormView
 
-from app import settings
+from django.conf import settings
 from user_account.forms import UserAccountRegistrationForm, UserAccountProfileForm, UserProfileUpdateForm, ContactUs
 from user_account.models import User
 
