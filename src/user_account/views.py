@@ -97,7 +97,7 @@ class ContactUsView(FormView):
             send_mail(
                 subject=form.cleaned_data['subject'],
                 message=form.cleaned_data['message'],
-                from_email=settings.EMAIL_HOST_USER,
+                from_email=request.user.email,
                 recipient_list=[settings.EMAIL_HOST_USER],
                 fail_silently=False,
             )
