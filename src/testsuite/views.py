@@ -7,7 +7,7 @@ from django.shortcuts import render, redirect
 from django.template import loader, Context
 from django.urls import reverse, reverse_lazy
 from django.views import View
-from django.views.generic import ListView, DeleteView
+from django.views.generic import ListView, DeleteView, FormView
 
 from testsuite.forms import TestDeleteForm
 from testsuite.models import Question, Test, Answer, TestResultDetail, TestResult
@@ -186,14 +186,4 @@ def handler400(request, exception):
 
 def handler403(request, exception):
     return render(request, '403.html', status=403)
-
-
-# def last_run(self):
-#         last_run = self.test_runs.order_by('-id').first()
-#         if last_run:
-#             return last_run.datetime_run
-#         return ''
-#
-#     datetime_run = models.DateTimeField(auto_now_add=True)
-#     is_completed = models.BooleanField(default=False)
 

@@ -33,6 +33,10 @@
 
    <ul class="navbar-nav">
                 {% if user.is_authenticated %}
+                    <li class="nav-item active">
+                        <a class="nav-link" href="{% url 'user_account:contact_us' %}">Contact us</a>
+                    </li>
+
                     <li class="nav-item">
                         <img class="small-avatar" src="{{ user.image.url }}" alt="" />
                     </li>
