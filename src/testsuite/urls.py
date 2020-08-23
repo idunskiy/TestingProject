@@ -1,6 +1,6 @@
 from django.urls import path
 
-from testsuite.views import TestRunView, TestSuiteListView, TestDeleteView, TestStartView
+from testsuite.views import TestRunView, TestSuiteListView, TestDeleteView, TestStartView, slow_func
 
 app_name = 'test'
 
@@ -11,5 +11,6 @@ urlpatterns = [
     path('<int:pk>/start/', TestStartView.as_view(), name='start'),
     # path('<int:pk>/question/<int:seq_nr>', TestRunView.as_view(), name='testrun_step'),
     path('<int:pk>/next', TestRunView.as_view(), name='next'),
+    path('slow', slow_func, name='slow')
 
 ]

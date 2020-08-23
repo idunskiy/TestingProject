@@ -12,7 +12,7 @@ from django.views.generic import ListView, DeleteView, FormView
 from testsuite.forms import TestDeleteForm
 from testsuite.models import Question, Test, Answer, TestResultDetail, TestResult
 from user_account.models import User
-
+from testsuite.tasks import run_slow
 
 class TestSuiteListView(ListView):
     model = Test
@@ -170,6 +170,11 @@ class TestRunView(LoginRequiredMixin, View):
                     'time_spent': str(dt1-dt2)
                 }
                 )
+
+
+def slow_func(request):
+    run_slow.delay()
+    return HttpResponse('DONE!')
 
 
 def handler404(request, exception):

@@ -38,3 +38,4 @@ class User(AbstractUser):
                     successful_tests += 1
         if all_test_results.count() != 0:
             return round(successful_tests / all_test_results.count() * 100, 2)
+        # return '0'
