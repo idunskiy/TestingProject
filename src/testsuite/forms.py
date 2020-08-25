@@ -1,6 +1,6 @@
 from django import forms
 from django.core.exceptions import ValidationError
-from django.forms import BaseInlineFormSet, ModelForm
+from django.forms import BaseInlineFormSet, ModelForm, Form, fields
 
 from testsuite.models import Test
 

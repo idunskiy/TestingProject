@@ -1,7 +1,7 @@
 from django import template
 from django.core.validators import MinValueValidator, MaxValueValidator
-from django.db import models
-from django.db.models import Count, Sum, Max
+from django.db import models, connection
+from django.db.models import Count, Sum, Max, IntegerField, Value
 
 from django.conf import settings
 
@@ -90,7 +90,6 @@ class TestResult(models.Model):
             num_answers=Count('question'),
             score=Sum('is_correct')
         )
-        print(qs)
         self.avg_score = sum(
             int(entry['score']) / entry['num_answers']
             for entry in qs
@@ -107,8 +106,9 @@ class TestResult(models.Model):
         correct_answers = 0
         qs = self.test_result_details.values('question').annotate(
             num_answers=Count('question'),
-            score=Sum('is_correct')
+            score=Sum(('is_correct'), default=Value(0), output_field=IntegerField())
         )
+        # qs = self.my_custom_sql('SELECT testsuite_testresultdetail.question_id, COUNT(testsuite_testresultdetail.question_id) AS num_answers, SUM(testsuite_testresultdetail.is_correct::int) AS score FROM testsuite_testresultdetail WHERE testsuite_testresultdetail.test_result_id = 144 GROUP BY testsuite_testresultdetail.question_id LIMIT 21;')
         for entry in qs:
             if int(entry['score']) / entry['num_answers'] == 1:
                 correct_answers += 1
@@ -123,11 +123,23 @@ class TestResult(models.Model):
         return TestResult.objects.all().count()
 
 
+    def my_custom_sql(self, query):
+        with connection.cursor() as cursor:
+            print(query)
+            cursor.execute(query)
+            # cursor.execute("SELECT foo FROM bar WHERE baz = %s", [self.baz])
+            row = cursor.fetchone()
+        return row
+
+
 class TestResultDetail(models.Model):
     test_result = models.ForeignKey(to=TestResult, related_name='test_result_details', on_delete=models.CASCADE)
     question = models.ForeignKey(to=Question, null=True, blank=True, on_delete=models.CASCADE)
     answer = models.ForeignKey(to=Answer, on_delete=models.CASCADE)
-    is_correct = models.BooleanField(default=False)
+    is_correct = models.IntegerField(
+        validators=[MinValueValidator(0), MaxValueValidator(1)],
+        default=0
+    )
 
 
 class TestSale(models.Model):

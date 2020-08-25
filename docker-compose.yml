@@ -1,0 +1,53 @@
+version: '3'
+
+services:
+
+  backend:
+    build: ./
+    container_name: backend
+    restart: always
+#    command: python manage.py runserver 0:8005
+    command: ./commands/${RUN_MODE}.sh
+#    ports:
+#      - 8005:8005
+    ports:
+      - ${WSGI_PORT}:${WSGI_PORT}
+    environment:
+      - DJANGO_SETTINGS_MODULE=app.settings.${RUN_MODE}
+    volumes:
+      - ./src:/opt/project
+      - ./commands:/opt/project/commands
+      - static_content:/var/www/testsuite
+#    env_file:
+#      - ./src/app/settings/.env.example
+    env_file:
+      - .env
+    depends_on:
+      - postgresql
+
+  postgresql:
+    image: "postgres:12"
+    container_name: postgresql
+    restart: always
+    env_file:
+      - ./src/app/settings/.env
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  nginx:
+    image: nginx:1.18-alpine
+    container_name: nginx
+    volumes:
+      - ./nginx:/etc/nginx/conf.d
+      - static_content:/var/www/testsuite
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - backend
+
+volumes:
+  pgdata: {}
+  static_content: {}
+  media_content: {}
+

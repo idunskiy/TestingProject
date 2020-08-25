@@ -1,5 +1,6 @@
 from app.settings.base import * # noqa
 from app.settings.components.database import * # noqa
+from app.settings.components.email import * # noqa
 
 DEBUG = False
 ALLOWED_HOSTS = ['*', '127.0.0.1', 'localhost', '45.33.97.206']

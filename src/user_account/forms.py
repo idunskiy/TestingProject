@@ -1,7 +1,8 @@
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from django.core.exceptions import ValidationError
 from django.forms import ModelForm
-
+from django.forms import Form, fields
+from django import forms
 from user_account.models import User
 
 
@@ -33,3 +34,8 @@ class UserProfileUpdateForm(ModelForm):
     class Meta:
         model = User
         fields = ['image']
+
+
+class ContactUs(Form):
+    subject = fields.CharField(max_length=256, empty_value='Message from TestSuite')
+    message = fields.CharField(widget=forms.Textarea)

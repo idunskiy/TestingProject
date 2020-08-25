@@ -3,6 +3,7 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.db.models import Max, Sum, Count
 
+
 from testsuite.models import TestResult
 
 
@@ -37,3 +38,4 @@ class User(AbstractUser):
                     successful_tests += 1
         if all_test_results.count() != 0:
             return round(successful_tests / all_test_results.count() * 100, 2)
+        # return '0'
