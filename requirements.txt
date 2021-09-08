@@ -11,7 +11,7 @@ Jinja2==2.11.2
 MarkupSafe==1.1.1
 mccabe==0.6.1
 MyApplication==0.1.0
-Pillow==7.1.2
+Pillow==8.3.2
 pycodestyle==2.6.0
 pydevd-pycharm==193.6911.25
 pyflakes==2.2.0
